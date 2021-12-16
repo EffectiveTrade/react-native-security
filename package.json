@@ -9,7 +9,7 @@
     "clean": "watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -rf node_modules/ && npm cache verify",
     "publish": "npm publish"
   },
-  "main": "index.ts",
+  "main": "src/index.ts",
   "repository": {
     "type": "git",
     "url": "https://git.effectivetrade.ru/react-native-shared/react-native-security.git"
