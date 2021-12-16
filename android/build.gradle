@@ -1,0 +1,53 @@
+buildscript {
+  repositories {
+    google()
+    jcenter()
+  }
+
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.0.1'
+  }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 29
+
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 29
+    versionCode 1
+    versionName "1.0"
+  }
+  lintOptions {
+    abortOnError false
+  }
+
+  buildTypes {
+    debug{
+      buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+      buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+    }
+    release {
+      buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+      buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+    }
+  }
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  google()
+}
+
+dependencies {
+  implementation "com.facebook.react:react-native:+"
+  implementation 'androidx.annotation:annotation:1.0.0'
+  implementation 'androidx.annotation:annotation:1.0.0'
+
+  implementation 'androidx.biometric:biometric:1.1.0-beta01'
+
+  compile 'com.google.code.gson:gson:2.8.2'
+}

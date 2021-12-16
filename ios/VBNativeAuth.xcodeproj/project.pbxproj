@@ -1,0 +1,341 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C97B7DA92211BDEF00AB3D6F /* SecurityV2.m in Sources */ = {isa = PBXBuildFile; fileRef = C97B7DA82211BDEF00AB3D6F /* SecurityV2.m */; };
+		EDE1BD252049A10F00C880C7 /* EHFAuthenticator.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE1BD1C2049A10F00C880C7 /* EHFAuthenticator.m */; };
+		EDE1BD262049A10F00C880C7 /* SAMKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE1BD202049A10F00C880C7 /* SAMKeychainQuery.m */; };
+		EDE1BD272049A10F00C880C7 /* SAMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE1BD232049A10F00C880C7 /* SAMKeychain.m */; };
+		EDE1BD282049A10F00C880C7 /* VBNativeAuth.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE1BD242049A10F00C880C7 /* VBNativeAuth.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		ED2F729020499CC80055A8B7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C97B7DA72211BDEF00AB3D6F /* SecurityV2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecurityV2.h; sourceTree = "<group>"; };
+		C97B7DA82211BDEF00AB3D6F /* SecurityV2.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecurityV2.m; sourceTree = "<group>"; };
+		ED2F729220499CC80055A8B7 /* libVBNativeAuth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libVBNativeAuth.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDE1BD1C2049A10F00C880C7 /* EHFAuthenticator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EHFAuthenticator.m; sourceTree = "<group>"; };
+		EDE1BD1D2049A10F00C880C7 /* EHFAuthenticator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EHFAuthenticator.h; sourceTree = "<group>"; };
+		EDE1BD1E2049A10F00C880C7 /* VBNativeAuth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VBNativeAuth.h; sourceTree = "<group>"; };
+		EDE1BD202049A10F00C880C7 /* SAMKeychainQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAMKeychainQuery.m; sourceTree = "<group>"; };
+		EDE1BD212049A10F00C880C7 /* SAMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAMKeychain.h; sourceTree = "<group>"; };
+		EDE1BD222049A10F00C880C7 /* SAMKeychainQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAMKeychainQuery.h; sourceTree = "<group>"; };
+		EDE1BD232049A10F00C880C7 /* SAMKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAMKeychain.m; sourceTree = "<group>"; };
+		EDE1BD242049A10F00C880C7 /* VBNativeAuth.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VBNativeAuth.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ED2F728F20499CC80055A8B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C97B7DA62211BDB500AB3D6F /* SecurityV2 */ = {
+			isa = PBXGroup;
+			children = (
+				C97B7DA72211BDEF00AB3D6F /* SecurityV2.h */,
+				C97B7DA82211BDEF00AB3D6F /* SecurityV2.m */,
+			);
+			path = SecurityV2;
+			sourceTree = "<group>";
+		};
+		ED2F728920499CC80055A8B7 = {
+			isa = PBXGroup;
+			children = (
+				C97B7DA62211BDB500AB3D6F /* SecurityV2 */,
+				ED2F729420499CC80055A8B7 /* VBNativeAuth */,
+				ED2F729320499CC80055A8B7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		ED2F729320499CC80055A8B7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED2F729220499CC80055A8B7 /* libVBNativeAuth.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ED2F729420499CC80055A8B7 /* VBNativeAuth */ = {
+			isa = PBXGroup;
+			children = (
+				EDE1BD1B2049A10F00C880C7 /* EHFAuthenticator */,
+				EDE1BD1F2049A10F00C880C7 /* SAMKeychain */,
+				EDE1BD1E2049A10F00C880C7 /* VBNativeAuth.h */,
+				EDE1BD242049A10F00C880C7 /* VBNativeAuth.m */,
+			);
+			path = VBNativeAuth;
+			sourceTree = "<group>";
+		};
+		EDE1BD1B2049A10F00C880C7 /* EHFAuthenticator */ = {
+			isa = PBXGroup;
+			children = (
+				EDE1BD1C2049A10F00C880C7 /* EHFAuthenticator.m */,
+				EDE1BD1D2049A10F00C880C7 /* EHFAuthenticator.h */,
+			);
+			path = EHFAuthenticator;
+			sourceTree = "<group>";
+		};
+		EDE1BD1F2049A10F00C880C7 /* SAMKeychain */ = {
+			isa = PBXGroup;
+			children = (
+				EDE1BD202049A10F00C880C7 /* SAMKeychainQuery.m */,
+				EDE1BD212049A10F00C880C7 /* SAMKeychain.h */,
+				EDE1BD222049A10F00C880C7 /* SAMKeychainQuery.h */,
+				EDE1BD232049A10F00C880C7 /* SAMKeychain.m */,
+			);
+			path = SAMKeychain;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED2F729120499CC80055A8B7 /* VBNativeAuth */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED2F729B20499CC80055A8B7 /* Build configuration list for PBXNativeTarget "VBNativeAuth" */;
+			buildPhases = (
+				ED2F728E20499CC80055A8B7 /* Sources */,
+				ED2F728F20499CC80055A8B7 /* Frameworks */,
+				ED2F729020499CC80055A8B7 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VBNativeAuth;
+			productName = VBNativeAuth;
+			productReference = ED2F729220499CC80055A8B7 /* libVBNativeAuth.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ED2F728A20499CC80055A8B7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0910;
+				ORGANIZATIONNAME = ORGANIZATIONNAME;
+				TargetAttributes = {
+					ED2F729120499CC80055A8B7 = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = ED2F728D20499CC80055A8B7 /* Build configuration list for PBXProject "VBNativeAuth" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = ED2F728920499CC80055A8B7;
+			productRefGroup = ED2F729320499CC80055A8B7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED2F729120499CC80055A8B7 /* VBNativeAuth */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ED2F728E20499CC80055A8B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EDE1BD262049A10F00C880C7 /* SAMKeychainQuery.m in Sources */,
+				EDE1BD272049A10F00C880C7 /* SAMKeychain.m in Sources */,
+				EDE1BD282049A10F00C880C7 /* VBNativeAuth.m in Sources */,
+				EDE1BD252049A10F00C880C7 /* EHFAuthenticator.m in Sources */,
+				C97B7DA92211BDEF00AB3D6F /* SecurityV2.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		ED2F729920499CC80055A8B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		ED2F729A20499CC80055A8B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		ED2F729C20499CC80055A8B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W6XDNFYTYF;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../react-native/Libraries",
+					"$(SRCROOT)/../../react-native/React",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ED2F729D20499CC80055A8B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W6XDNFYTYF;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../react-native/Libraries",
+					"$(SRCROOT)/../../react-native/React",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		ED2F728D20499CC80055A8B7 /* Build configuration list for PBXProject "VBNativeAuth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED2F729920499CC80055A8B7 /* Debug */,
+				ED2F729A20499CC80055A8B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED2F729B20499CC80055A8B7 /* Build configuration list for PBXNativeTarget "VBNativeAuth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED2F729C20499CC80055A8B7 /* Debug */,
+				ED2F729D20499CC80055A8B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ED2F728A20499CC80055A8B7 /* Project object */;
+}
