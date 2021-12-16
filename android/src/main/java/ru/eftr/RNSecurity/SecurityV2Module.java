@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -38,6 +39,7 @@ import javax.crypto.NoSuchPaddingException;
 import devliving.online.securedpreferencestore.DefaultRecoveryHandler;
 import devliving.online.securedpreferencestore.SecuredPreferenceStore;
 import ru.eftr.RNSecurity.SecurityV2.CipherHelper;
+import ru.eftr.RNSecurity.SecurityV2.FingerprintChangeObserver;
 import ru.eftr.RNSecurity.model.ErrorCode;
 import ru.eftr.RNSecurity.model.ErrorResponse;
 import ru.eftr.RNSecurity.model.FingerPrintError;
@@ -463,6 +465,17 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
       promise.resolve(null);
     } catch (Exception ex) {
       new ErrorResponse(ErrorCode.UNDEFINED, ex.getMessage()).reject(promise);
+    }
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  @ReactMethod
+  public void hasFingerPrintChanged(Callback errorCallback, Callback successCallback) {
+    try {
+      this._ensureFingerprintAuthAvailable();
+      FingerprintChangeObserver.getInstance(this.getReactApplicationContext()).hasFingerPrintChanged(errorCallback, successCallback);
+    } catch (RNException | RuntimeException e) {
+      errorCallback.invoke("BIOMETRY_UNAVAILABLE" + e);
     }
   }
 

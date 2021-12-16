@@ -117,4 +117,14 @@ export class SecurityV2 implements ISecurityV2 {
   public cancelBiometry(options?: {}): Promise<void> {
     return Promise.resolve();
   }
+
+  static hasFingerPrintChanged(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      return SecurityV2Module.hasFingerPrintChanged(error => {
+        reject(correctError(error));
+      }, result => {
+        resolve(result);
+      })
+    });
+  };
 }

@@ -77,4 +77,14 @@ export class SecurityV2 implements ISecurityV2 {
   public unlockByCode(code: string, options?: {}): Promise<void> {
     return SecurityV2Module.unlockByCode(code, options).catch(correctErrorCatch);
   }
+
+  static hasFingerPrintChanged(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      return SecurityV2Module.hasFingerPrintChanged(error => {
+        reject(correctError(error));
+      }, result => {
+        resolve(result);
+      })
+    });
+  };
 }
