@@ -7,12 +7,12 @@
     "start": "node_modules/react-native/packager/packager.sh",
     "test": "npm run lint",
     "clean": "watchman watch-del-all && rm -rf $TMPDIR/react-* && rm -rf node_modules/ && npm cache verify",
-    "update-from-example": "cp -fr example/node_modules/vtb.broker.security/ ./"
+    "publish": "npm publish"
   },
   "main": "index.ts",
   "repository": {
     "type": "git",
-    "url": "NA"
+    "url": "https://git.effectivetrade.ru/react-native-shared/react-native-security.git"
   },
   "keywords": [
     "react-native",
@@ -29,9 +29,9 @@
   "author": "Dmitry Afanasiev",
   "license": "ISC",
   "bugs": {
-    "url": "https://localhost"
+    "url": "https://git.effectivetrade.ru/react-native-shared/react-native-security/issues"
   },
-  "homepage": "NA",
+  "homepage": "https://git.effectivetrade.ru/react-native-shared/react-native-security/wiki",
   "devDependencies": {
     "eslint": "2.0.0",
     "eslint-plugin-react": "2.7.1"
