@@ -1,6 +1,6 @@
 {
   "name": "react-native-security",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "react-native-security",
   "scripts": {
     "lint": "node_modules/.bin/eslint ",
