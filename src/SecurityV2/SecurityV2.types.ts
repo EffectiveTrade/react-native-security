@@ -72,4 +72,10 @@ export interface ISecurityV2 {
    * @exception RNSecurityError
    */
   clean(options?: {}): Promise<void>;
+
+  /**
+   * Проверить, изменились ли биометрические данные.
+   * @exception RNException
+   */
+  hasFingerPrintChanged(): Promise<boolean>
 }

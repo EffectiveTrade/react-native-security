@@ -118,11 +118,11 @@ export class SecurityV2 implements ISecurityV2 {
     return Promise.resolve();
   }
 
-  static hasFingerPrintChanged(): Promise<boolean> {
+  public hasFingerPrintChanged(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      return SecurityV2Module.hasFingerPrintChanged(error => {
-        reject(correctError(error));
-      }, result => {
+      return SecurityV2Module.hasFingerPrintChanged((error: INativeError) => {
+        reject(error);
+      }, (result: boolean) => {
         resolve(result);
       })
     });

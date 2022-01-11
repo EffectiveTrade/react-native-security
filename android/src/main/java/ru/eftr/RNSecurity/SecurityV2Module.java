@@ -475,7 +475,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
       this._ensureFingerprintAuthAvailable();
       FingerprintChangeObserver.getInstance(this.getReactApplicationContext()).hasFingerPrintChanged(errorCallback, successCallback);
     } catch (RNException | RuntimeException e) {
-      errorCallback.invoke("BIOMETRY_UNAVAILABLE" + e);
+      errorCallback.invoke("BIOMETRY_UNAVAILABLE");
     }
   }
 
