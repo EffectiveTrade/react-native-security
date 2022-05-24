@@ -446,8 +446,8 @@ public class SecurityAuthModule extends ReactContextBaseJavaModule {
       }
       cipher = Cipher.getInstance(
         KeyProperties.KEY_ALGORITHM_AES + "/"
-          + KeyProperties.BLOCK_MODE_CBC + "/"
-          + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+          + KeyProperties.BLOCK_MODE_GCM + "/"
+          + KeyProperties.ENCRYPTION_PADDING_NONE);
 
       keyStore.load(null);
       SecretKey key;

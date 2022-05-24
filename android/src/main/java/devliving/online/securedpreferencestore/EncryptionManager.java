@@ -96,12 +96,13 @@ public class EncryptionManager {
 
     private static final String ENCRYPTION_PADDING_RSA_PKCS1 = "PKCS1Padding";
     private static final String ENCRYPTION_PADDING_PKCS7 = "PKCS7Padding";
+    private static final String ENCRYPTION_PADDING_OAEP_MGF1 = "OAEPwithSHA-256andMGF1Padding";
     private static final String ENCRYPTION_PADDING_NONE = "NoPadding";
     private static final String MAC_ALGORITHM_HMAC_SHA256 = "HmacSHA256";
 
     private final String RSA_CIPHER = KEY_ALGORITHM_RSA + "/" +
             BLOCK_MODE_ECB + "/" +
-            ENCRYPTION_PADDING_RSA_PKCS1;
+            ENCRYPTION_PADDING_OAEP_MGF1;
     private final String AES_CIPHER = KEY_ALGORITHM_AES + "/" +
             BLOCK_MODE_GCM + "/" +
             ENCRYPTION_PADDING_NONE;
