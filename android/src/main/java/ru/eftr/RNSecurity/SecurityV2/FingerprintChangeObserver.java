@@ -81,8 +81,8 @@ public class FingerprintChangeObserver extends ReactContextBaseJavaModule {
     Cipher defaultCipher;
     try {
       defaultCipher = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/"
-        + KeyProperties.BLOCK_MODE_CBC + "/"
-        + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+        + KeyProperties.BLOCK_MODE_GCM + "/"
+        + KeyProperties.ENCRYPTION_PADDING_NONE);
 
     } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
       errorCallback.invoke(e.getMessage());
