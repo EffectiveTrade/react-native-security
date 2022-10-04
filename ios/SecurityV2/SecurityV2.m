@@ -312,46 +312,77 @@ RCT_EXPORT_METHOD(setUnlockBiometry:(NSDictionary *)options completion:(RCTRespo
         return;
     }
 
-    // logic
 
-    CFErrorRef errorRef = NULL;
-    SecAccessControlRef sacObject = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
-                                                                    kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
-                                                                    kSecAccessControlTouchIDAny, &errorRef);
-    if (sacObject == NULL || errorRef != NULL) {
-        NSString *errorString = [NSString stringWithFormat:@"SecAccessControlCreateWithFlags error: %@", errorRef];
-        NSError* error = [NSError errorWithDomain:@"saveCredByBiometry error" code:1 userInfo:nil];
-        callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
+    LAContext *laContext = [[LAContext alloc] init];
+
+    // Prepeare to run FaceID scanner
+    if ([laContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics error:&error]) {
+        if (error != NULL) {
+            // handle error
+             callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], error.domain, error)]);
+       } else {
+
+            // Run FaceID scanner
+            [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"Test Reason" reply:^(BOOL success, NSError * _Nullable error) {
+
+                if (error != NULL) {
+                    // Failed to run FaceID
+                    NSString *errorString = [NSString stringWithFormat:@"Failed to run FaceID with error: %@", error];
+                    error = [NSError errorWithDomain:@"setUnlockBiometry error" code:42 userInfo:nil];
+                    callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
+
+                } else if (success) {
+                    // Success FaceID
+                    // store secrets to protected keychain entry
+
+                    CFErrorRef errorRef = NULL;
+                    SecAccessControlRef sacObject = SecAccessControlCreateWithFlags(kCFAllocatorDefault,
+                                                                                    kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
+                                                                                    kSecAccessControlTouchIDAny, &errorRef);
+                    if (sacObject == NULL || errorRef != NULL) {
+                        NSString *errorString = [NSString stringWithFormat:@"SecAccessControlCreateWithFlags error: %@", errorRef];
+                        NSError* error = [NSError errorWithDomain:@"saveCredByBiometry error" code:1 userInfo:nil];
+                        callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
+                    }
+                    else {
+                        NSArray* array = @[SecurityV2_BiometryKeyChainValue];
+                        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:array];
+                        NSDictionary *attributes = @{
+                                                     (id)kSecClass: (id)kSecClassGenericPassword,
+                                                     (id)kSecAttrService: SecurityV2_Service_Biometry,
+                                                     (id)kSecValueData: data,
+                                                     (id)kSecAttrAccount: SecurityV2_GlobalAccount,
+                                                     (id)kSecUseAuthenticationUI: (id)kSecUseAuthenticationUIAllow,
+                                                     (id)kSecAttrAccessControl: (__bridge_transfer id)sacObject
+                                                     };
+
+                        OSStatus status =  SecItemAdd((__bridge CFDictionaryRef)attributes, nil);
+
+                        // if item exists, delete it and add new one
+                        if(status == errSecDuplicateItem) {
+                            [SAMKeychain deletePasswordForService:SecurityV2_Service_Biometry];
+                            status =  SecItemAdd((__bridge CFDictionaryRef)attributes, nil);
+                        }
+
+                        if(status == errSecSuccess) {
+                            callback(@[[NSNull null]]);
+                        }
+                        else {
+                            NSString *errorString = [NSString stringWithFormat:@"SecItemAdd status: %@", [self keychainErrorToString:status]];
+                            error = [NSError errorWithDomain:@"setUnlockBiometry error" code:42 userInfo:nil];
+                            callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
+                        }
+                    }
+
+                } else {
+                    // Wrong face provided
+                    error = [NSError errorWithDomain:@"setUnlockBiometry error" code:11 userInfo:nil];
+                    callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], @"Wrong face", error)]);
+                }
+            }];
+        }
     }
-    else {
-        NSArray* array = @[SecurityV2_BiometryKeyChainValue];
-        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:array];
-        NSDictionary *attributes = @{
-                                     (id)kSecClass: (id)kSecClassGenericPassword,
-                                     (id)kSecAttrService: SecurityV2_Service_Biometry,
-                                     (id)kSecValueData: data,
-                                     (id)kSecAttrAccount: SecurityV2_GlobalAccount,
-                                     (id)kSecUseAuthenticationUI: (id)kSecUseAuthenticationUIAllow,
-                                     (id)kSecAttrAccessControl: (__bridge_transfer id)sacObject
-                                     };
 
-        OSStatus status =  SecItemAdd((__bridge CFDictionaryRef)attributes, nil);
-
-        // if item exists, delete it and add new one
-        if(status == errSecDuplicateItem) {
-            [SAMKeychain deletePasswordForService:SecurityV2_Service_Biometry];
-            status =  SecItemAdd((__bridge CFDictionaryRef)attributes, nil);
-        }
-
-        if(status == errSecSuccess) {
-            callback(@[[NSNull null]]);
-        }
-        else {
-            NSString *errorString = [NSString stringWithFormat:@"SecItemAdd status: %@", [self keychainErrorToString:status]];
-            error = [NSError errorWithDomain:@"setUnlockBiometry error" code:42 userInfo:nil];
-            callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
-        }
-    }
 }
 
 //unlockByBiometry(options?: {}): Promise<void>;
