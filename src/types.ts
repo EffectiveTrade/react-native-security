@@ -87,7 +87,15 @@ export enum RNSecurityErrorEnum {
 // ❗ При добавлении значений необходимо также добавить его в index.js
 export enum SecurityErrorSubCodeAndroidEnum {
   FINGERPRINT_ACQUIRED_IMAGER_DIRTY = 0x00000003,
+  /**
+   * The operation was canceled because the API is locked out due to too many attempts. This occurs after 5 failed attempts, and lasts for 30 seconds.
+   */
   FINGERPRINT_ERROR_LOCKOUT = 0x00000007,
+  /**
+   * The operation was canceled because FINGERPRINT_ERROR_LOCKOUT occurred too many times.
+   * Fingerprint authentication is disabled until the user unlocks with strong authentication (PIN/Pattern/Password)
+   */
+  FINGERPRINT_ERROR_LOCKOUT_PERMANENT = 0x00000009,
   /**
    * Fingerprint operation canceled.
    * Вернёт, если во время запроса отпечатся залочить устройство.

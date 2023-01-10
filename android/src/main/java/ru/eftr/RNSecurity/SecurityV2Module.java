@@ -431,6 +431,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
       .setTitle(title)
       .setSubtitle(subTitle)
       .setNegativeButtonText(negativeText)
+      .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
       .build();
 
     Handler h = new Handler(context.getMainLooper());
