@@ -17,6 +17,18 @@ function correctError(error: INativeError): ISecurityV2Error {
 }
 
 export class SecurityV2 implements ISecurityV2 {
+  public initialSetup(options?: {}): Promise<void> {
+    return new Promise((resolve, reject) => {
+      SecurityV2Module.initialSetup(options, (error: INativeError) => {
+        if (error) {
+          reject(correctError(error));
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   public clean(options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
       SecurityV2Module.clean(options, (error: INativeError) => {

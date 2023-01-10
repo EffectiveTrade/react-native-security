@@ -63,7 +63,7 @@ NSString *const SecurityV2_FirstLaunchFlag = @"SecurityV2_FirstLaunchFlag";
 - (id) init {
     self = [super init];
     if (self != nil) {
-        [self checkFirstLaunch];
+        [self checkFirstLaunch: @{}];
         [self refreshInitState];
     }
     return self;
@@ -75,30 +75,30 @@ RCT_EXPORT_MODULE()
     return YES;
 }
 
--(BOOL)setAttemptCounterValue:(NSInteger) value {
+-(BOOL)setAttemptCounterValue:(NSInteger)value options:(NSDictionary *)options {
     NSData *payload = [NSData dataWithBytes:&value length:sizeof(value)];
-    BOOL counterSuccess = [SAMKeychain setPasswordData:payload forService:SecurityV2_Service_AttemptCounter account:SecurityV2_GlobalAccount];
+    BOOL counterSuccess = [SAMKeychain setPasswordData:payload forService:[self getServiceKey:SecurityV2_Service_AttemptCounter options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
     return counterSuccess;
 }
 
--(NSInteger)attemptCounterValue {
+-(NSInteger)attemptCounterValue: (NSDictionary *)options {
     NSInteger value = 0;
-    NSData* payload = [SAMKeychain passwordDataForService:SecurityV2_Service_AttemptCounter account:SecurityV2_GlobalAccount];
+    NSData* payload = [SAMKeychain passwordDataForService:[self getServiceKey:SecurityV2_Service_AttemptCounter options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
     if(payload) {
         [payload getBytes:&value length:sizeof(value)];
     }
     return value;
 }
 
--(BOOL)incrementAttemptCounterOrCleanWhenLimitExceeded {
+-(BOOL)incrementAttemptCounterOrCleanWhenLimitExceeded:(NSDictionary *)options {
     BOOL result;
-    NSInteger nextValue = [self attemptCounterValue] + 1;
+    NSInteger nextValue = [self attemptCounterValue: options] + 1;
     if(nextValue >= SecurityV2_AttemptCounterLimit ){
-        [self _clean];
+        [self _clean: options];
         result = YES;
     }
     else {
-        [self setAttemptCounterValue:nextValue];
+        [self setAttemptCounterValue:nextValue options: options];
         result = NO;
     }
     return result;
@@ -128,16 +128,16 @@ RCT_EXPORT_MODULE()
 // NSUserDefaults очищаются при удалении приложения с устройства, а KeyChain нет
 // поэтому, чтобы при запуске после установки не были получены старые данные из KeyChain,
 // мониторим первый запуск по NSUserDefaults и делаем очистку KeyChain
-- (void)checkFirstLaunch {
+- (void)checkFirstLaunch:(NSDictionary *)options {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if([defaults boolForKey:SecurityV2_FirstLaunchFlag] == NO) {
-        [self _clean];
-        [defaults setBool:YES forKey:SecurityV2_FirstLaunchFlag];
+    if([defaults boolForKey:[self getServiceKey:SecurityV2_FirstLaunchFlag options: options]] == NO) {
+        [self _clean: options];
+        [defaults setBool:YES forKey:[self getServiceKey:SecurityV2_FirstLaunchFlag options: options]];
     }
 }
 
 - (void)refreshInitState {
-    self._isLocked = ![self _isEmpty];
+    self._isLocked = ![self _isEmpty: @{}];
 }
 
 - (NSString *)keychainErrorToString:(OSStatus)error {
@@ -167,11 +167,28 @@ RCT_EXPORT_MODULE()
     return message;
 }
 
+- (NSString *) getServiceKey:(NSString *)key options:(NSDictionary *)options {
+    NSString *prefix = [options objectForKey:@"prefix"];
+    if(prefix != nil){
+            return [key stringByAppendingString: prefix];
+        }else {
+            return key;
+        }
+}
+
+// initialSetup(options?: {}): Promise<void>;
+
+RCT_EXPORT_METHOD(initialSetup:(NSDictionary *)options completion:(RCTResponseSenderBlock)callback) {
+    [self checkFirstLaunch: options];
+
+    callback(@[[NSNull null]]);
+}
+
 //clean(options?: {}): Promise<void>;
 
 RCT_EXPORT_METHOD(clean:(NSDictionary *)options completion:(RCTResponseSenderBlock)callback) {
     NSError* error = NULL;
-    BOOL ok = [self _clean];
+    BOOL ok = [self _clean: options];
 
     if (ok) {
         callback(@[[NSNull null]]);
@@ -184,20 +201,21 @@ RCT_EXPORT_METHOD(clean:(NSDictionary *)options completion:(RCTResponseSenderBlo
     }
 }
 
-- (BOOL)_clean {
-    [SAMKeychain deletePasswordForService:SecurityV2_Service_AttemptCounter];
-    [SAMKeychain deletePasswordForService:SecurityV2_Service_Code];
-    [SAMKeychain deletePasswordForService:SecurityV2_Service_Creds];
-    [SAMKeychain deletePasswordForService:SecurityV2_Service_Biometry];
+- (BOOL)_clean:(NSDictionary *)options {
+    [SAMKeychain deletePasswordForService:[self getServiceKey:SecurityV2_Service_AttemptCounter options: options]];
+    [SAMKeychain deletePasswordForService:[self getServiceKey:SecurityV2_Service_Code options: options]];
+    [SAMKeychain deletePasswordForService:[self getServiceKey:SecurityV2_Service_Creds options: options]];
+    [SAMKeychain deletePasswordForService:[self getServiceKey:SecurityV2_Service_Biometry options: options]];
     self._isLocked = NO;
 
     return YES;
 }
 
-- (BOOL)_isEmpty {
-    NSString *v1 = [SAMKeychain passwordForService:SecurityV2_Service_AttemptCounter account:SecurityV2_GlobalAccount];
-    NSString *v2 = [SAMKeychain passwordForService:SecurityV2_Service_Code account:SecurityV2_GlobalAccount];
-    NSString *v3 = [SAMKeychain passwordForService:SecurityV2_Service_Creds account:SecurityV2_GlobalAccount];
+- (BOOL)_isEmpty:(NSDictionary *)options {
+    NSString *account = [self getServiceKey:SecurityV2_GlobalAccount options: options];
+    NSString *v1 = [SAMKeychain passwordForService:[self getServiceKey:SecurityV2_Service_AttemptCounter options: options] account:account];
+    NSString *v2 = [SAMKeychain passwordForService:[self getServiceKey:SecurityV2_Service_Code options: options] account:account];
+    NSString *v3 = [SAMKeychain passwordForService:[self getServiceKey:SecurityV2_Service_Creds options: options] account:account];
     // не запрашивается, так как вызывает запрос на аутенитификацию по биометрии
 //    NSString *v4 = [SAMKeychain passwordForService:SecurityV2_Service_Biometry account:SecurityV2_GlobalAccount];
     BOOL isEmpty = !v1 && !v2 && !v3;
@@ -219,7 +237,7 @@ RCT_EXPORT_METHOD(save:(NSString*)creds options:(NSDictionary *)options completi
 
     if(!error) {
         [SAMKeychain setAccessibilityType:kSecAttrAccessibleWhenUnlockedThisDeviceOnly];
-        BOOL ok = [SAMKeychain setPassword:creds forService:SecurityV2_Service_Creds account:SecurityV2_GlobalAccount];
+        BOOL ok = [SAMKeychain setPassword:creds forService:[self getServiceKey:SecurityV2_Service_Creds options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
         if (!ok) {
             error = [NSError errorWithDomain:@"Error" code:1 userInfo:nil];
         }
@@ -238,7 +256,7 @@ RCT_EXPORT_METHOD(read:(NSDictionary *)options completion:(RCTResponseSenderBloc
     NSError* error = [self ensureUnlocked];
 
     if(!error) {
-        NSString *creds = [SAMKeychain passwordForService:SecurityV2_Service_Creds account:SecurityV2_GlobalAccount];
+        NSString *creds = [SAMKeychain passwordForService:[self getServiceKey:SecurityV2_Service_Creds options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
         if (!creds) {
             error = [NSError errorWithDomain:@"Error" code:3 userInfo:nil];
         } else {
@@ -258,7 +276,7 @@ RCT_EXPORT_METHOD(setUnlockCode:(NSString*)code options:(NSDictionary *)options 
 
     if(!error) {
         [SAMKeychain setAccessibilityType:kSecAttrAccessibleWhenUnlockedThisDeviceOnly];
-        BOOL ok = [SAMKeychain setPassword:code forService:SecurityV2_Service_Code account:SecurityV2_GlobalAccount];
+        BOOL ok = [SAMKeychain setPassword:code forService:[self getServiceKey:SecurityV2_Service_Code options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
         if (!ok) {
             error = [NSError errorWithDomain:@"Error" code:41 userInfo:nil];
         }
@@ -276,20 +294,20 @@ RCT_EXPORT_METHOD(setUnlockCode:(NSString*)code options:(NSDictionary *)options 
 RCT_EXPORT_METHOD(unlockByCode:(NSString*)code options:(NSDictionary *)options completion:(RCTResponseSenderBlock)callback) {
     NSError* error = NULL;
 
-    NSString *unlockCode = [SAMKeychain passwordForService:SecurityV2_Service_Code account:SecurityV2_GlobalAccount];
+    NSString *unlockCode = [SAMKeychain passwordForService:[self getServiceKey:SecurityV2_Service_Code options: options] account:[self getServiceKey:SecurityV2_GlobalAccount options: options]];
     BOOL ok = unlockCode && code && [unlockCode isEqualToString:code];
     if (!ok) {
         self._isLocked = YES;
         error = [NSError errorWithDomain:@"Error" code:21 userInfo:nil];
     } else {
         self._isLocked = NO;
-        [self setAttemptCounterValue:0];
+        [self setAttemptCounterValue:0 options: options];
     }
 
     if(!error) {
         callback(@[[NSNull null]]);
     } else {
-        BOOL cleanOk = [self incrementAttemptCounterOrCleanWhenLimitExceeded];
+        BOOL cleanOk = [self incrementAttemptCounterOrCleanWhenLimitExceeded: options];
         if(!cleanOk)
             callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], error.domain, error)]);
         else {
@@ -345,13 +363,13 @@ RCT_EXPORT_METHOD(setUnlockBiometry:(NSDictionary *)options completion:(RCTRespo
                         callback(@[RCTJSErrorFromCodeMessageAndNSError([@(error.code) stringValue], errorString, error)]);
                     }
                     else {
-                        NSArray* array = @[SecurityV2_BiometryKeyChainValue];
+                        NSArray* array = @[[self getServiceKey:SecurityV2_BiometryKeyChainValue options: options]];
                         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:array];
                         NSDictionary *attributes = @{
                                                      (id)kSecClass: (id)kSecClassGenericPassword,
-                                                     (id)kSecAttrService: SecurityV2_Service_Biometry,
+                                                     (id)kSecAttrService: [self getServiceKey:SecurityV2_Service_Biometry options: options],
                                                      (id)kSecValueData: data,
-                                                     (id)kSecAttrAccount: SecurityV2_GlobalAccount,
+                                                     (id)kSecAttrAccount: [self getServiceKey:SecurityV2_GlobalAccount options: options],
                                                      (id)kSecUseAuthenticationUI: (id)kSecUseAuthenticationUIAllow,
                                                      (id)kSecAttrAccessControl: (__bridge_transfer id)sacObject
                                                      };
@@ -360,7 +378,7 @@ RCT_EXPORT_METHOD(setUnlockBiometry:(NSDictionary *)options completion:(RCTRespo
 
                         // if item exists, delete it and add new one
                         if(status == errSecDuplicateItem) {
-                            [SAMKeychain deletePasswordForService:SecurityV2_Service_Biometry];
+                            [SAMKeychain deletePasswordForService:[self getServiceKey:SecurityV2_Service_Biometry options: options]];
                             status =  SecItemAdd((__bridge CFDictionaryRef)attributes, nil);
                         }
 
@@ -397,8 +415,8 @@ RCT_EXPORT_METHOD(unlockByBiometry:(NSDictionary *)options completion:(RCTRespon
 
     NSDictionary *query = @{
                             (id)kSecClass: (id)kSecClassGenericPassword,
-                            (id)kSecAttrService: SecurityV2_Service_Biometry,
-                            (id)kSecAttrAccount: SecurityV2_GlobalAccount,
+                            (id)kSecAttrService: [self getServiceKey:SecurityV2_Service_Biometry options: options],
+                            (id)kSecAttrAccount: [self getServiceKey:SecurityV2_GlobalAccount options: options],
                             (id)kSecMatchLimit: (id)kSecMatchLimitOne,
                             (id)kSecReturnData: @YES,
                             (id)kSecUseOperationPrompt: secUseOperationPrompt,
@@ -413,10 +431,10 @@ RCT_EXPORT_METHOD(unlockByBiometry:(NSDictionary *)options completion:(RCTRespon
             NSData *resultData = (__bridge_transfer NSData *)dataTypeRef;
             NSArray *array = [NSKeyedUnarchiver unarchiveObjectWithData:resultData];
             NSString *value = array[0];
-            BOOL ok = value && [value isEqualToString:SecurityV2_BiometryKeyChainValue];
+            BOOL ok = value && [value isEqualToString:[self getServiceKey:SecurityV2_BiometryKeyChainValue options: options]];
             if(ok) {
                 self._isLocked = NO;
-                [self setAttemptCounterValue:0];
+                [self setAttemptCounterValue:0 options: options];
                 callback(@[[NSNull null]]);
             } else {
                 NSError* error = [NSError errorWithDomain:@"unlockByBiometry error" code:3 userInfo:nil];

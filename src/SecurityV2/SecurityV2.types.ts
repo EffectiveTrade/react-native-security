@@ -78,4 +78,11 @@ export interface ISecurityV2 {
    * @exception RNException
    */
   hasFingerPrintChanged(): Promise<boolean>
+
+  /**
+   * Инициализация модуля (очистка не валидных данных).
+   * @param options
+   * @exception RNSecurityError
+   */
+  initialSetup(options?: {}): Promise<void>;
 }

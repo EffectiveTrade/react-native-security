@@ -75,11 +75,11 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   /**
    * Не должен кидать исключений. В случае ошибки делает clean.
    */
-  private void initIfNeeded() {
+  private void initIfNeeded(String prefix) {
     if (!this._isInitialized) {
       boolean ok;
       try {
-        this._isLocked = !this.isEmpty();
+        this._isLocked = !this.isEmpty(prefix);
         ok = true;
       } catch (RNException ex) {
         ex.printStackTrace();
@@ -88,7 +88,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
 
       if (!ok) {
         try {
-          this._clean();
+          this._clean(prefix);
         } catch (RNException ex) {
           ex.printStackTrace();
         }
@@ -98,11 +98,19 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }
   }
 
-  private SecuredPreferenceStore getSecuredPreferenceStore() throws RNException, IOException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableEntryException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException, SecuredPreferenceStore.MigrationFailedException, KeyStoreException {
+  private String getStoreFileName(String prefix) {
+    if (prefix != null) {
+      return prefix + this.getName() + ".securedStore";
+    } else {
+      return this.getName() + ".securedStore";
+    }
+  }
+
+  private SecuredPreferenceStore getSecuredPreferenceStore(String prefix) throws RNException, IOException, CertificateException, NoSuchAlgorithmException, InvalidKeyException, UnrecoverableEntryException, InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchProviderException, SecuredPreferenceStore.MigrationFailedException, KeyStoreException {
     if (!this._isInitialized) {
       final Context context = this.getContext();
       //not mandatory, can be null too
-      String storeFileName = this.getName() + ".securedStore";
+      String storeFileName = getStoreFileName(prefix);
       //not mandatory, can be null too
       String keyPrefix = this.getName();
       //it's better to provide one, and you need to provide the same key each time after the first time
@@ -114,20 +122,20 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     return SecuredPreferenceStore.getSharedInstance();
   }
 
-  private void ensureUnlocked() throws RNException {
-    if (this.getIsLocked()) {
+  private void ensureUnlocked(String prefix) throws RNException {
+    if (this.getIsLocked(prefix)) {
       throw new RNException(ErrorCode.LOCKED);
     }
   }
 
-  private boolean getIsLocked() {
-    this.initIfNeeded();
+  private boolean getIsLocked(String prefix) {
+    this.initIfNeeded(prefix);
     return this._isLocked;
   }
 
-  private boolean isEmpty() throws RNException {
+  private boolean isEmpty(String prefix) throws RNException {
     try {
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       boolean result = store.getAll().size() == 0;
       store.throwExceptionIfErrorOccurred();
       return result;
@@ -136,12 +144,21 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }
   }
 
+  //    initialSetup(options?: {}): Promise<void>;
+
+  @ReactMethod
+  public void initialSetup(ReadableMap options, Promise promise) {
+    // ничего не нужно очищать
+    promise.resolve(null);
+  }
+
 //    clean(options?: {}): Promise<void>;
 
   @ReactMethod
   public void clean(ReadableMap options, Promise promise) {
     try {
-      this._clean();
+      String prefix = options.getString("prefix");
+      this._clean(prefix);
       promise.resolve(null);
     } catch (RNException ex) {
       new ErrorResponse(ex).reject(promise);
@@ -150,9 +167,9 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }
   }
 
-  private void _clean() throws RNException {
+  private void _clean(String prefix) throws RNException {
     try {
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       store.edit().clear().commit();
       store.throwExceptionIfErrorOccurred();
     } catch (Exception ex) {
@@ -176,16 +193,16 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }
   }
 
-  private void tryIncrementUnlockAttempts(LockType lockType) throws RNException {
+  private void tryIncrementUnlockAttempts(LockType lockType, String prefix) throws RNException {
     try {
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       int nextValue = store.getInt(UNLOCK_ATTEMPTS_KEY, 0) + 1;
       store.throwExceptionIfErrorOccurred();
 
       if (nextValue >= MAX_ATTEMPTS) {
         // по старой логике очистку делать только при неверном коде
         if (lockType == LockType.Code) {
-          this._clean();
+          this._clean(prefix);
         }
 
         ErrorCode errorCode = lockType == LockType.Code ? ErrorCode.PINCODE_TO_MUCH_ATTEMPTS : ErrorCode.FINGERPRINT_TO_MUCH_ATTEMPTS;
@@ -201,9 +218,9 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }
   }
 
-  private void _resetUnlockAttempts() throws RNException {
+  private void _resetUnlockAttempts(String prefix) throws RNException {
     try {
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       store.edit().putInt(UNLOCK_ATTEMPTS_KEY, 0).commit();
       store.throwExceptionIfErrorOccurred();
     } catch (Exception ex) {
@@ -259,8 +276,9 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void save(String creds, ReadableMap options, Promise promise) {
     try {
-      this.ensureUnlocked();
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      String prefix = options.getString("prefix");
+      this.ensureUnlocked(prefix);
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       store.edit().putString(CREDS_KEY, creds).commit();
       store.throwExceptionIfErrorOccurred();
       promise.resolve(null);
@@ -276,8 +294,9 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void read(ReadableMap options, Promise promise) {
     try {
-      this.ensureUnlocked();
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      String prefix = options.getString("prefix");
+      this.ensureUnlocked(prefix);
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       String creds = store.getString(CREDS_KEY, null);
       store.throwExceptionIfErrorOccurred();
 
@@ -294,8 +313,9 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setUnlockCode(String code, ReadableMap options, Promise promise) {
     try {
-      this.ensureUnlocked();
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      String prefix = options.getString("prefix");
+      this.ensureUnlocked(prefix);
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       store.edit().putString(CODE_KEY, code).commit();
       store.throwExceptionIfErrorOccurred();
       promise.resolve(null);
@@ -311,16 +331,17 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void unlockByCode(String code, ReadableMap options, Promise promise) {
     try {
-      SecuredPreferenceStore store = this.getSecuredPreferenceStore();
+      String prefix = options.getString("prefix");
+      SecuredPreferenceStore store = this.getSecuredPreferenceStore(prefix);
       String unlockCode = store.getString(CODE_KEY, "");
       boolean isValid = unlockCode.equals(code);
       store.throwExceptionIfErrorOccurred();
       if (!isValid) {
-        this.tryIncrementUnlockAttempts(LockType.Code);
+        this.tryIncrementUnlockAttempts(LockType.Code, prefix);
         throw new RNException(ErrorCode.PINCODE_CHECK_FAILED);
       }
 
-      _resetUnlockAttempts();
+      _resetUnlockAttempts(prefix);
       this._isLocked = false;
 
       promise.resolve(null);
@@ -337,7 +358,8 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setUnlockBiometry(ReadableMap options, final Promise promise) {
     try {
-      this.ensureUnlocked();
+      String prefix = options.getString("prefix");
+      this.ensureUnlocked(prefix);
       this._authenticateByBiometry(options, promise, false);
     } catch (RNException ex) {
       new ErrorResponse(ex).reject(promise);
@@ -362,6 +384,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
 
   @RequiresApi(api = Build.VERSION_CODES.M)
   private void _authenticateByBiometry(ReadableMap options, final Promise promise, final boolean lockOnFail) throws RNException {
+    final String prefix = options.getString("prefix");
     this._ensureFingerprintAuthAvailable();
     this._cancelAndResetBiometry();
 
@@ -382,7 +405,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
         if (biometricPrompt == null) return; // already handled
         //отпечаток считался, но не распознался
         ErrorCode error = FingerPrintError.getFingerPrintError(errorCode).securityErrorCode;
-        _onBiometryFailed(error,
+        _onBiometryFailed(prefix, error,
           promise, lockOnFail,
           new ErrorResponse(error, "", String.valueOf(errorCode))
         );
@@ -396,7 +419,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
         //все прошло успешно
         _cancelAndResetBiometry();
         try {
-          _resetUnlockAttempts();
+          _resetUnlockAttempts(prefix);
           _isLocked = false;
           promise.resolve(null);
         } catch (RNException ex) {
@@ -410,7 +433,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
         if (biometricPrompt == null) return; // already handled
         //грязные пальчики, недостаточно сильный зажим
         //можно показать helpString в виде тоста
-        _onBiometryFailed(ErrorCode.FINGERPRINT_FAILED,
+        _onBiometryFailed(prefix, ErrorCode.FINGERPRINT_FAILED,
           promise, lockOnFail,
           new ErrorResponse(ErrorCode.FINGERPRINT_FAILED, "", String.valueOf(FINGERPRINT_ACQUIRED_IMAGER_DIRTY))
         );
@@ -443,7 +466,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     }, 100);
   }
 
-  private void _onBiometryFailed(ErrorCode errorCode, Promise promise, boolean lockOnFail, ErrorResponse errorResponse) {
+  private void _onBiometryFailed(String prefix, ErrorCode errorCode, Promise promise, boolean lockOnFail, ErrorResponse errorResponse) {
     _cancelAndResetBiometry();
     if (lockOnFail) {
       _isLocked = true;
@@ -452,7 +475,7 @@ public class SecurityV2Module extends ReactContextBaseJavaModule {
     try {
       //not increment retry count when not try scan
       if (errorCode != ErrorCode.FINGERPRINT_CANCELED)
-        tryIncrementUnlockAttempts(LockType.Biometry);
+        tryIncrementUnlockAttempts(LockType.Biometry, prefix);
       errorResponse.reject(promise);
     } catch (RNException ex) {
       new ErrorResponse(ex).reject(promise);

@@ -33,6 +33,10 @@ function correctErrorCatch(error: INativeError | string) {
 }
 
 export class SecurityV2 implements ISecurityV2 {
+  public initialSetup(options?: {}): Promise<void> {
+    return SecurityV2Module.initialSetup(options).catch(correctErrorCatch);
+  }
+
   public clean(options?: {}): Promise<void> {
     return SecurityV2Module.clean(options).catch(correctErrorCatch);
   }
