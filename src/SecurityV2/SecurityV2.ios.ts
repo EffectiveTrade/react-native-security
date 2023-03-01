@@ -3,6 +3,7 @@ import { RNSecurityErrorEnum } from '../types';
 import { ISecurityV2, ISecurityV2Error } from './SecurityV2.types';
 
 const SecurityV2Module = NativeModules.SecurityV2;
+const EMPTY_OBJ = {};
 
 interface INativeError {
   code: number | string;
@@ -31,7 +32,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public clean(options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.clean(options, (error: INativeError) => {
+      SecurityV2Module.clean(options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -43,7 +44,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public lock(options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.lock(options, (error: INativeError) => {
+      SecurityV2Module.lock(options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -55,7 +56,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public read(options?: {}): Promise<string | undefined> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.read(options, (error: INativeError, creds: string) => {
+      SecurityV2Module.read(options || EMPTY_OBJ, (error: INativeError, creds: string) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -68,7 +69,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public save(creds: string | undefined, options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.save(creds, options, (error: INativeError) => {
+      SecurityV2Module.save(creds, options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -80,7 +81,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public setUnlockBiometry(options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.setUnlockBiometry(options, (error: INativeError) => {
+      SecurityV2Module.setUnlockBiometry(options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -92,7 +93,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public setUnlockCode(code: string, options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.setUnlockCode(code, options, (error: INativeError) => {
+      SecurityV2Module.setUnlockCode(code, options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -104,7 +105,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public unlockByBiometry(options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.unlockByBiometry(options, (error: INativeError) => {
+      SecurityV2Module.unlockByBiometry(options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
@@ -116,7 +117,7 @@ export class SecurityV2 implements ISecurityV2 {
 
   public unlockByCode(code: string, options?: {}): Promise<void> {
     return new Promise((resolve, reject) => {
-      SecurityV2Module.unlockByCode(code, options, (error: INativeError) => {
+      SecurityV2Module.unlockByCode(code, options || EMPTY_OBJ, (error: INativeError) => {
         if (error) {
           reject(correctError(error));
         } else {
