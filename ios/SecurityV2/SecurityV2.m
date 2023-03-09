@@ -320,6 +320,7 @@ RCT_EXPORT_METHOD(unlockByCode:(NSString*)code options:(NSDictionary *)options c
 //setUnlockBiometry(options?: {}): Promise<void>;
 
 RCT_EXPORT_METHOD(setUnlockBiometry:(NSDictionary *)options completion:(RCTResponseSenderBlock)callback) {
+    NSString* text = options ? options[@"text"] : NULL;
     NSError* error = [self ensureUnlocked];
     if(!error) {
         error = [self ensureBiometrySupported];
@@ -341,7 +342,7 @@ RCT_EXPORT_METHOD(setUnlockBiometry:(NSDictionary *)options completion:(RCTRespo
        } else {
 
             // Run FaceID scanner
-            [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:@"Test Reason" reply:^(BOOL success, NSError * _Nullable error) {
+           [laContext evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason: [text length] == 0 ? @"Test reason" : text reply:^(BOOL success, NSError * _Nullable error) {
 
                 if (error != NULL) {
                     // Failed to run FaceID
