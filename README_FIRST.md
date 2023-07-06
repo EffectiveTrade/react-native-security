@@ -1,11 +1,12 @@
-У этого проекта есть клон - security библиотека проекта GI.
-При внесении изменений в этот проект надо уведомить руководителя проекта и технической группы проекта GI о необходимости рассмотреть внесение аналогичных исправлений.
+# Библиотека для безопасного хранения секретов
 
-Если вы делаете форк от этого проекта, вам, помимо переименования очевидных имен (пакеты, префиксы и т.д.), необходимо задать уникальные значения имен сервисов для sskeychain в /ios/VBNativeAuth/VBNativeAuth.m
+Описание библиотеки https://doc.effectivetrade.ru/display/DEV/2021/12/16/react-native-security
 
-```
-NSString *const CredServiceLogin = ...;
-NSString *const CredServicePassword = ...;
-NSString *const CredServiceBiometry = ...;
-NSString *const CredServiceAttemptCounter = ...;
-```
+## Публикация в NPM
+Стандартная semver версия библиотеки без префиксов и постфиксов должна быть только на master ветке. Метка latest тоже должна быть на master ветке.
+
+Если создаете ветку с фиксом под конкретный проект, то в package.json и package-lock.json в поле version задать номер версии с постфиксом - именем или аббревиатурой проекта (например 0.1.25-investwl).
+
+Памятка по публикации в NPM компании
+
+https://doc.effectivetrade.ru/pages/viewpage.action?pageId=113935152
