@@ -117,8 +117,11 @@ public class FingerprintChangeObserver extends ReactContextBaseJavaModule {
       return true;
     } catch (KeyPermanentlyInvalidatedException e) {
       return false;
+      // После изменения режима шифрования на GCM старые ключи становятся невалидными, выбрасывается InvalidKeyException, нужно его обработать и создать новый ключ
+    } catch (InvalidKeyException e) {
+      return false;
     } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
-      | NoSuchAlgorithmException | InvalidKeyException e) {
+      | NoSuchAlgorithmException e) {
       throw new RuntimeException("Failed to init Cipher", e);
     }
   }
@@ -148,11 +151,11 @@ public class FingerprintChangeObserver extends ReactContextBaseJavaModule {
       KeyGenParameterSpec.Builder builder = new KeyGenParameterSpec.Builder(keyName,
         KeyProperties.PURPOSE_ENCRYPT |
           KeyProperties.PURPOSE_DECRYPT)
-        .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+        .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
         // Require the user to authenticate with a fingerprint to authorize every use
         // of the key
         .setUserAuthenticationRequired(true)
-        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7);
+        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE);
 
       // This is a workaround to avoid crashes on devices whose API level is < 24
       // because KeyGenParameterSpec.Builder#setInvalidatedByBiometricEnrollment is only
